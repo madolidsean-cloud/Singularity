@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore black holes, how they form, what JWST has revealed, and the theories physics uses to investigate their interiors.">
+    <title>Black Holes - Cosmic Mysteries</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Black Holes</h1>
+        <p>Exploring the Universe's Most Mysterious Objects</p>
+    </header>
+
+    <nav aria-label="Main navigation">
+        <ul>
+            <li><a href="blackhole-viewer.html">Interactive Black-Hole Viewer</a></li>
+            <li><a href="#what">What Are They?</a></li>
+            <li><a href="#types">Types</a></li>
+            <li><a href="#formation">Formation</a></li>
+            <li><a href="#jwst">JWST &amp; Black-Hole Stars</a></li>
+            <li><a href="#interior">Inside &amp; Theoretical Physics</a></li>
+            <li><a href="#facts">Facts</a></li>
+            <li><a href="#research">Research</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <section id="what">
+            <h2>What Are Black Holes?</h2>
+            <p>
+                A black hole is a region of spacetime whose gravity is so strong that, once matter or light
+                crosses its event horizon, it cannot get back out. The event horizon is a boundary, not a
+                solid surface. Black holes are detected by observing how they affect nearby stars and gas,
+                and by studying radiation from material falling toward them.
+            </p>
+            <div class="info-box">
+                <strong>Key concept:</strong> A black hole itself does not shine like a star. However, gas
+                spiraling around it can become extremely hot and bright before crossing the event horizon.
+                That glowing material is one of the ways astronomers find and study black holes.
+            </div>
+            <p>
+                Black holes are predicted by Einstein's general theory of relativity. Astronomers now have
+                several kinds of evidence for them, including stellar orbits, X-rays from hot gas, gravitational
+                waves from mergers, and images of the glowing surroundings of black holes.
+            </p>
+        </section>
+
+        <section id="types">
+            <h2>Types of Black Holes</h2>
+            <div class="features">
+    <article class="feature-card">
+        <img src="Assets/Stellar Black hole.png" alt="Image of a stellar-mass black hole" loading="lazy">
+        <h3>Stellar-mass black holes</h3>
+        <p>
+            These form when the cores of some massive stars collapse at the end of their lives.
+            Their masses are several to many times the mass of the Sun; the exact outcome depends
+            on the star and its surroundings.
+        </p>
+    </article>
+
+    <article class="feature-card">
+        <img src="Assets/Supermassive Black hole.png" alt="Image of a supermassive black hole" loading="lazy">
+        <h3>Supermassive black holes</h3>
+        <p>
+            These contain millions or billions of solar masses and are found in the centers of
+            many large galaxies. How the earliest supermassive black holes gained their first
+            mass so quickly is an active research question.
+        </p>
+    </article>
+
+    <article class="feature-card">
+        <img src="Assets/Intermediate Black hole.png" alt="Image representing an intermediate-mass black hole" loading="lazy">
+        <h3>Intermediate-mass candidates</h3>
+        <p>
+            Black holes between stellar-mass and supermassive sizes are difficult to find. A number
+            of candidates have been reported, and astronomers are working to establish their masses
+            and nature.
+        </p>
+    </article>
+
+    <article class="feature-card">
+        <img src="Assets/Primordial Black hole.png" alt="Illustration of a hypothetical primordial black hole" loading="lazy">
+        <h3>Primordial black holes</h3>
+        <p>
+            These are hypothetical black holes that may have formed from dense regions in the very
+            early universe. They have not been confirmed.
+        </p>
+    </article>
+</div>
+            <figure class="visual-example">
+                <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Stylized illustration of black holes of different sizes">
+                    <defs>
+                        <radialGradient id="bg1" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#0f172a"/>
+                            <stop offset="55%" stop-color="#020817"/>
+                            <stop offset="100%" stop-color="#01050a"/>
+                        </radialGradient>
+                    </defs>
+                    <rect width="900" height="420" fill="url(#bg1)"/>
+
+                    <g opacity="0.9">
+                        <circle cx="140" cy="210" r="36" fill="#0b1020" stroke="#c7d2fe" stroke-width="3"/>
+                        <circle cx="140" cy="210" r="55" fill="none" stroke="#7dd3fc" stroke-width="2" stroke-dasharray="8 10"/>
+                        <text x="140" y="315" text-anchor="middle" fill="#dbeafe" font-size="22" font-family="Segoe UI, Arial, sans-serif">Stellar</text>
+
+                        <circle cx="440" cy="210" r="72" fill="#0b1020" stroke="#c7d2fe" stroke-width="3"/>
+                        <circle cx="440" cy="210" r="112" fill="none" stroke="#7dd3fc" stroke-width="2" stroke-dasharray="8 10"/>
+                        <text x="440" y="315" text-anchor="middle" fill="#dbeafe" font-size="22" font-family="Segoe UI, Arial, sans-serif">Intermediate</text>
+
+                        <circle cx="720" cy="210" r="128" fill="#0b1020" stroke="#c7d2fe" stroke-width="3"/>
+                        <circle cx="720" cy="210" r="170" fill="none" stroke="#7dd3fc" stroke-width="2" stroke-dasharray="8 10"/>
+                        <text x="720" y="315" text-anchor="middle" fill="#dbeafe" font-size="22" font-family="Segoe UI, Arial, sans-serif">Supermassive</text>
+                    </g>
+
+                    <g fill="#dbeafe" font-size="14" font-family="Segoe UI, Arial, sans-serif">
+                        <text x="115" y="173">~10 solar masses</text>
+                        <text x="395" y="185">~10^2–10^5 solar masses</text>
+                        <text x="640" y="175">~10^6–10^10 solar masses</text>
+                    </g>
+                </svg>
+                <figcaption>
+                    <p><strong>Visual example:</strong> A schematic comparison of different black-hole size classes. This is a simplified illustration used for scale, not a direct image of a real black hole.</p>
+                    <p class="visual-credit">Conceptual illustration created for educational use.</p>
+                </figcaption>
+            </figure>
+        </section>
+
+        <section id="formation">
+            <h2>How Black Holes Form</h2>
+            <h3>From the death of a massive star</h3>
+            <p>
+                A massive star spends much of its life balancing inward gravity with outward pressure from
+                nuclear fusion. When its fuel is depleted, the core may no longer be able to support itself.
+                It collapses, and the star's outer layers may be expelled in a supernova. If the remaining core
+                is massive enough, it can continue collapsing into a black hole. Not every massive star makes
+                a black hole; some leave neutron stars instead.
+            </p>
+            <figure class="visual-example">
+                <img src="Assets/FormationBLKH.jpg" alt="Image of the formation of a black hole" loading="lazy">
+                <figcaption>
+                    <p><strong>Visual example:</strong> A simplified illustration of a massive star exhausting fuel, collapsing inward, and leaving behind a black hole.</p>
+                    <p class="visual-credit">Conceptual illustration by James Webb Telescope Cosmic Explorations.</p>
+                </figcaption>
+            </figure>
+            <h3>Possible routes to the first giant black holes</h3>
+            <p>
+                The first supermassive black holes had to grow in a young universe. One proposed route starts
+                with ordinary stellar remnants that gain mass by pulling in gas and merging with other black
+                holes. Another is a <strong>heavy seed</strong>: in special conditions, a large cloud of early,
+                mostly hydrogen and helium gas may avoid breaking into many normal stars and collapse into a
+                much more massive black-hole seed. This is called the direct-collapse scenario. It is a leading
+                hypothesis, not a process JWST has watched happen conclusively.
+            </p>
+            <div class="info-box">
+                <strong>Why the early universe is a puzzle:</strong> JWST has found candidate actively growing
+                black holes in very distant galaxies. Because their light has traveled for billions of years,
+                we see them as they were when the universe was young. Their apparent early presence motivates
+                theories for rapid growth and massive starting seeds, but observations do not yet identify one
+                single formation route for all of them.
+            </div>
+        </section>
+
+        <section id="jwst">
+            <h2>JWST and the “Black-Hole Star” Idea</h2>
+            <p>
+                The James Webb Space Telescope (JWST) observes infrared light, allowing it to study very distant
+                galaxies whose light has been stretched by the expansion of the universe. Webb can take spectra:
+                spreading an object's light into a rainbow of wavelengths so astronomers can examine features
+                made by atoms and molecules. Those features help reveal the object's distance, gas, and energy
+                sources.
+            </p>
+            <h3>What has Webb found?</h3>
+            <p>
+                Webb has identified compact, very distant objects nicknamed <em>little red dots</em>. In 2026,
+                NASA reported that deep JWST spectroscopy of the lensed candidate GLIMPSE-17775 showed a rich
+                set of emission-line features consistent with hot, dense gas around a rapidly feeding black
+                hole. The spectrum offers the strongest evidence yet for the proposed “black-hole star” picture.
+                The interpretation is based on the object's light and its spectral fingerprints—not a direct
+                photograph of a black hole or of one forming.
+            </p>
+            <figure class="visual-example">
+                <img src="Assets/Black hole star.png" alt="Artist illustration of a black-hole star, a dense gas envelope surrounding a growing black hole">
+                <figcaption>
+                    <p><strong>Artist's concept:</strong> A possible black-hole star—an accreting black hole surrounded by dense plasma of a star. This is an illustration of the proposed interpretation of Kurzgesagt - in a nutshell, not a photograph of the object or direct evidence of its appearance.</p>
+                    <p class="visual-credit">For more information visit: NASA, ESA, CSA, Vasily Kokorev (UT Austin); designer Leah Hustak (STScI). <a href="https://science.nasa.gov/asset/webb/evidence-of-a-black-hole-star/" target="_blank" rel="noopener noreferrer">View NASA's explanation and source image</a>.</p>
+                </figcaption>
+            </figure>
+            <div class="info-box">
+                <strong>Important caveat:</strong> “Strongest evidence yet” is not the same as final proof.
+                Astronomers compare the observed spectrum with predictions and alternative explanations.
+                These distant, faint objects are challenging to measure, so follow-up observations and analysis
+                are needed to test the interpretation.
+            </div>
+            <h3>What does “black-hole star” mean?</h3>
+            <p>
+                In this context, it does not mean a normal star with a black hole inside it. It is a proposed,
+                short-lived stage in which a growing black hole is wrapped in a thick envelope of gas. Gas
+                falling inward releases energy; the surrounding material absorbs and re-emits some of that
+                energy, making the whole unresolved object look compact and star-like from far away. The black
+                hole powers the glow through accretion, rather than through ordinary stellar fusion.
+            </p>
+            <h3>How might one form?</h3>
+            <ol style="margin-left: 22px; margin-bottom: 15px;">
+                <li>A dense, early-universe gas cloud collapses and may create a relatively massive black-hole seed.</li>
+                <li>The seed sits in a gas-rich environment and pulls in surrounding material.</li>
+                <li>Rapid accretion heats the infalling gas and produces intense radiation.</li>
+                <li>A thick gas envelope can reprocess that light, giving the system a compact, star-like appearance.</li>
+                <li>As the black hole grows or the surrounding gas is dispersed, this “black-hole star” phase would end.</li>
+            </ol>
+            <p>
+                Direct collapse and a black-hole star describe related but different ideas: direct collapse is
+                a proposed way to make a massive seed; “black-hole star” describes a possible luminous,
+                gas-enshrouded accretion phase. JWST's candidate evidence does not by itself prove how the seed
+                originally formed.
+            </p>
+            <div class="info-box">
+                <strong>Not the same as a dark star:</strong> In much of astrophysics, “dark star” refers to a
+                hypothetical early star whose energy comes from dark-matter annihilation. A “black-hole star”
+                in the JWST reports is instead a black hole accreting gas inside a dense envelope. The names
+                sound similar, but the proposed objects and power sources are different.
+            </div>
+            <p><strong>Further reading:</strong></p>
+            <ul class="source-list">
+                <li><a href="https://science.nasa.gov/missions/webb/nasa-webb-finds-strongest-evidence-yet-for-black-hole-stars/" target="_blank" rel="noopener noreferrer">NASA: Webb finds strongest evidence yet for “black-hole stars”</a></li>
+                <li><a href="https://science.nasa.gov/blogs/webb/2025/07/15/nasas-webb-finds-possible-direct-collapse-black-hole/" target="_blank" rel="noopener noreferrer">NASA: Webb finds a possible direct-collapse black hole</a></li>
+            </ul>
+        </section>
+
+        <section id="interior">
+            <h2>What Might Be Inside? Theoretical Physics</h2>
+            <p>
+                We cannot receive signals from inside an event horizon, so the interior is not something
+                astronomers can photograph or inspect directly. The best-tested description of gravity,
+                Einstein's general relativity, makes strong predictions outside and near black holes. But when
+                its equations are pushed to the predicted singularity, they stop giving a complete physical
+                account. A theory combining gravity with quantum physics may be needed. The ideas below are
+                important research frameworks and thought experiments—not confirmed descriptions of an interior.
+            </p>
+            <figure class="visual-example">
+                <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Stylized event horizon and interior conceptual illustration">
+                    <defs>
+                        <radialGradient id="bhIll" cx="35%" cy="50%" r="60%">
+                            <stop offset="0%" stop-color="#1f2937"/>
+                            <stop offset="20%" stop-color="#020617"/>
+                            <stop offset="38%" stop-color="#030712"/>
+                            <stop offset="100%" stop-color="#01050a"/>
+                        </radialGradient>
+                    </defs>
+                    <rect width="900" height="420" fill="#030712"/>
+                    <g>
+                        <circle cx="270" cy="210" r="118" fill="none" stroke="#7dd3fc" stroke-width="3" stroke-dasharray="12 12" opacity="0.9"/>
+                        <circle cx="270" cy="210" r="66" fill="url(#bhIll)" stroke="#dbeafe" stroke-width="4"/>
+                        <circle cx="270" cy="210" r="28" fill="#02050a"/>
+
+                        <path d="M 430 110 C 540 170, 620 170, 700 210 C 620 250, 540 250, 430 310" fill="none" stroke="#93c5fd" stroke-width="3" opacity="0.8"/>
+                        <path d="M 430 150 C 520 188, 590 190, 690 210" fill="none" stroke="#cbd5e1" stroke-width="2" opacity="0.7"/>
+                        <path d="M 430 270 C 520 232, 590 230, 690 210" fill="none" stroke="#cbd5e1" stroke-width="2" opacity="0.7"/>
+
+                        <text x="270" y="350" text-anchor="middle" fill="#dbeafe" font-size="24" font-family="Segoe UI, Arial, sans-serif">Event horizon</text>
+                        <text x="660" y="160" fill="#e0f2fe" font-size="20" font-family="Segoe UI, Arial, sans-serif">Possible</text>
+                        <text x="660" y="188" fill="#e0f2fe" font-size="20" font-family="Segoe UI, Arial, sans-serif">quantum-gravity</text>
+                        <text x="660" y="216" fill="#e0f2fe" font-size="20" font-family="Segoe UI, Arial, sans-serif">regime</text>
+                    </g>
+                </svg>
+                <figcaption>
+                    <p><strong>Conceptual still:</strong> A black hole with a highlighted event horizon and a speculative interior region beyond classical physics. This is not a real image of the inside of a black hole.</p>
+                    <p class="visual-credit">Theoretical visualization for educational use. Real interiors cannot be observed directly.</p>
+                </figcaption>
+            </figure>
+            <div class="info-box">
+                <strong>Evidence guide:</strong> The existence of black holes and many effects of gravity have
+                strong observational support. Hawking radiation and quantum-gravity ideas have deep theoretical
+                motivation, but have not been directly confirmed for astrophysical black holes. A mathematically
+                possible solution or imaginative thought experiment is a way to ask a question, not evidence
+                that nature actually works that way.
+            </div>
+
+            <h3>General relativity: falling inward</h3>
+            <p>
+                In the simplest classical models, crossing the event horizon is not like hitting a material
+                wall. Once inside, all future-directed paths lead deeper inward; escaping back outside is no
+                longer possible. Depending on the black hole's mass and the traveler's path, tidal gravity can
+                stretch and squeeze objects. General relativity predicts that continued collapse leads to a
+                singularity or, more precisely, a breakdown of the classical description where its equations
+                predict incomplete paths or extreme curvature. Physicists generally treat this as a sign that
+                the theory is incomplete in that regime, not as proof that an ordinary, infinitely dense point
+                has been physically observed.
+            </p>
+
+            <h3>Quantum physics and Hawking radiation</h3>
+            <p>
+                Quantum field theory applied to curved spacetime predicts that black holes should emit a very
+                faint thermal glow called <strong>Hawking radiation</strong> and slowly lose mass. This prediction
+                is influential, but the radiation from known astrophysical black holes is expected to be far too
+                weak to detect with current technology; it has not been directly observed from one. The idea
+                raises a profound question: if a black hole eventually evaporates, what happens to the quantum
+                information about the matter that fell in? This is the <strong>black hole information
+                paradox</strong>. Many theoretical arguments suggest information is preserved, but the full
+                physical mechanism and its observable consequences remain active research topics.
+            </p>
+
+            <h3>String theory and the fuzzball proposal</h3>
+            <p>
+                String theory is one attempt to describe gravity and quantum physics in a unified framework.
+                Within some string-theory models, the <strong>fuzzball proposal</strong> suggests that a black
+                hole's quantum state may be made of extended string-like ingredients rather than having the
+                smooth empty interior and point singularity of the simplest classical picture. In these models,
+                the event-horizon-scale description can differ from the classical one. Fuzzballs are a proposed
+                theoretical resolution in particular settings—not an observed object, and not a result
+                established for every black hole.
+            </p>
+
+            <h3>Other ideas and useful thought experiments</h3>
+            <p>
+                Physicists use thought experiments—such as asking what an observer falling through a horizon
+                experiences, or how information could be recovered from Hawking radiation—to expose tensions
+                between theories. Proposals such as black-hole complementarity, holographic descriptions, and
+                firewalls explore different ways to address those tensions. They do not all agree, and none
+                should be presented as a proven view from inside a black hole. Wormholes also arise in some
+                mathematical solutions, but there is no evidence that astrophysical black holes are portals or
+                that a person could travel through one.
+            </p>
+            <div class="info-box">
+                <strong>How ideas earn confidence:</strong> A compelling theory should be mathematically
+                consistent, explain existing observations, and—where possible—make testable predictions that
+                distinguish it from alternatives. Creativity helps generate questions; evidence and repeated
+                tests determine how much confidence an answer deserves.
+            </div>
+            <p><strong>Learn more:</strong></p>
+            <ul class="source-list">
+                <li><a href="https://www.einstein-online.info/en/spotlight/the-singularity-theorem/" target="_blank" rel="noopener noreferrer">Einstein Online: Singularity theorems and what they imply</a></li>
+                <li><a href="https://www.ctc.cam.ac.uk/outreach/origins/black_holes_four.php" target="_blank" rel="noopener noreferrer">University of Cambridge: Black holes and quantum gravity</a></li>
+                <li><a href="https://physics.mit.edu/wp-content/uploads/2023/09/PhysicsAtMIT_2023_Engelhardt_Feature.pdf" target="_blank" rel="noopener noreferrer">MIT Physics: The black hole information paradox</a></li>
+                <li><a href="https://ocw.mit.edu/courses/8-962-general-relativity-spring-2020/" target="_blank" rel="noopener noreferrer">MIT OpenCourseWare: General relativity</a></li>
+            </ul>
+        </section>
+
+        <section id="facts">
+            <h2>Fascinating Facts About Black Holes</h2>
+            <ul class="fact-list">
+                <li>Black holes can be detected through their effects on nearby matter, even though the black hole itself emits no light from inside its event horizon.</li>
+                <li>Gravity affects the passage of time; clocks close to a black hole run differently compared with clocks far away.</li>
+                <li>The supermassive black hole at the center of the Milky Way is called Sagittarius A*.</li>
+                <li>The Event Horizon Telescope collaboration released the first image of a black hole's shadow, in galaxy M87, in 2019.</li>
+                <li>Hawking radiation is a theoretical prediction that black holes can slowly lose energy; it has not been detected from an astrophysical black hole.</li>
+                <li>When black holes merge, they send ripples through spacetime called gravitational waves.</li>
+                <li>Hot gas in an accretion disk around a black hole can emit X-rays and other radiation.</li>
+            </ul>
+        </section>
+
+        <section id="research">
+            <h2>How Scientists Study Black Holes</h2>
+            <p>
+                No single telescope can answer every question about black holes. Astronomers combine observations
+                across the electromagnetic spectrum with gravitational-wave measurements and computer models.
+            </p>
+            <div class="info-box">
+                <strong>Event Horizon Telescope (EHT):</strong> A planet-wide network of radio observatories
+                that has produced images of the glowing surroundings and shadows of supermassive black holes.
+            </div>
+            <div class="info-box">
+                <strong>Gravitational-wave observatories:</strong> LIGO, Virgo, and KAGRA measure ripples in
+                spacetime from events such as black-hole mergers, providing information about the objects' masses
+                and spins.
+            </div>
+            <div class="info-box">
+                <strong>JWST:</strong> Webb's infrared imaging and spectroscopy help astronomers investigate
+                distant galaxies and possible actively growing black holes from the early universe.
+            </div>
+            <p>
+                By comparing evidence from these different methods, scientists can test how black holes grow,
+                how they affect their galaxies, and whether proposed early-universe objects are truly powered
+                by black holes.
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Black Holes - Cosmic Mysteries</p>
+        <p>Explore the wonders of the universe</p>
+    </footer>
+</body>
+</html>

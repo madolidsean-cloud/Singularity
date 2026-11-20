@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore a rotatable 3D black-hole model and compare it with planets.">
+    <title>Black Hole 3D Size Explorer</title>
+    <style>
+        :root { color-scheme: dark; --panel: rgba(13,20,38,.9); --cyan: #75d7ff; }
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; overflow: hidden; background: #02050d; color: #f4f7ff; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        #viewer { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+        .back { position: fixed; top: 18px; left: 18px; z-index: 2; color: white; text-decoration: none; background: var(--panel); border: 1px solid #385074; border-radius: 999px; padding: 10px 16px; }
+        .back:hover, .back:focus-visible, button:hover, button:focus-visible, select:focus-visible { border-color: var(--cyan); outline: none; }
+        .controls { position: fixed; top: 18px; right: 18px; width: min(340px,calc(100vw - 36px)); max-height: calc(100vh - 36px); overflow-y: auto; z-index: 2; background: var(--panel); border: 1px solid #385074; border-radius: 14px; padding: 16px; backdrop-filter: blur(10px); }
+        .controls h1 { font-size: 1.25rem; margin: 0 0 8px; }
+        .controls p { margin: 0 0 12px; color: #c4d0e4; font-size: .82rem; line-height: 1.45; }
+        label { display: block; font-size: .82rem; margin: 10px 0 5px; color: #bfcbe0; }
+        select, button { width: 100%; border-radius: 8px; border: 1px solid #4b5d79; background: #18243a; color: white; padding: 9px 10px; font: inherit; }
+        button { cursor: pointer; margin-top: 8px; }
+        .planet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+        .planet-grid button { margin: 0; }
+        .stats { margin-top: 12px; padding-top: 12px; border-top: 1px solid #385074; font-size: .85rem; line-height: 1.55; }
+        .stats strong { color: #94e0ff; }
+        .hint { position: fixed; left: 18px; bottom: 18px; z-index: 2; background: var(--panel); border: 1px solid #385074; border-radius: 8px; padding: 8px 12px; color: #cad5e8; font-size: .82rem; pointer-events: none; }
+        @media (max-width:700px) { .controls { top:auto; bottom:12px; right:12px; max-height:58vh; } .hint { display:none; } .back { top:12px; left:12px; } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior:auto !important; } }
+    </style>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+    <a class="back" href="blackhole.html">← Back to the article</a>
+    <div id="viewer" role="img" aria-label="Interactive three-dimensional black-hole visualization"></div>
+
+    <aside class="controls" aria-label="3D viewer controls">
+        <h1>3D Size &amp; Scale Explorer</h1>
+        <p>Drag to rotate the scene; scroll or pinch to zoom. The render uses a compressed display scale so planets remain visible beside enormous black holes.</p>
+        <label for="holeType">Black-hole model</label>
+        <select id="holeType">
+            <option value="stellar">Stellar-mass — about 10 solar masses</option>
+            <option value="intermediate">Intermediate-mass — about 10,000 solar masses</option>
+            <option value="supermassive">Supermassive — about 4 million solar masses</option>
+            <option value="ton618">TON 618 — about 66 billion solar masses</option>
+        </select>
+        <label>Add a comparison object</label>
+        <div class="planet-grid">
+            <button data-planet="earth">Add Earth</button>
+            <button data-planet="jupiter">Add Jupiter</button>
+            <button data-planet="sun">Add the Sun</button>
+            <button id="clearPlanets">Clear objects</button>
+        </div>
+        <button id="resetView">Reset camera</button>
+        <div class="stats" id="stats" aria-live="polite"></div>
+    </aside>
+    <div class="hint">Drag to orbit · Scroll / pinch to zoom · Right-drag to pan</div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        const mount = document.getElementById('viewer');
+        const select = document.getElementById('holeType');
+        const stats = document.getElementById('stats');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x02050d);
+
+        const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 2000);
+        camera.position.set(0, 3.2, 8.5);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        renderer.setSize(innerWidth, innerHeight);
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.25;
+        mount.appendChild(renderer.domElement);
+
+        const orbit = new OrbitControls(camera, renderer.domElement);
+        orbit.enableDamping = true;
+        orbit.dampingFactor = 0.055;
+        orbit.minDistance = 2.6;
+        orbit.maxDistance = 30;
+        orbit.target.set(0, 0, 0);
+
+        scene.add(new THREE.AmbientLight(0x9caed8, 0.7));
+        const keyLight = new THREE.PointLight(0xffc26e, 110, 30);
+        keyLight.position.set(3, 4, 4);
+        scene.add(keyLight);
+        const blueLight = new THREE.PointLight(0x4c8cff, 55, 24);
+        blueLight.position.set(-4, -2, -3);
+        scene.add(blueLight);
+
+        const models = {
+            stellar: { name: 'Stellar-mass', mass: 'about 10 solar masses', radius: 0.43, schwarzschild: 'about 30 km' },
+            intermediate: { name: 'Intermediate-mass', mass: 'about 10,000 solar masses', radius: 0.58, schwarzschild: 'about 30,000 km' },
+            supermassive: { name: 'Supermassive (Sagittarius A* scale)', mass: 'about 4 million solar masses', radius: 0.76, schwarzschild: 'about 12 million km' },
+            ton618: { name: 'TON 618', mass: 'roughly 66 billion solar masses', radius: 1.02, schwarzschild: 'roughly 1,300 AU (about 194 billion km)' }
+        };
+        const comparison = {
+            earth: { name: 'Earth', color: 0x438eff, radius: 0.09 },
+            jupiter: { name: 'Jupiter', color: 0xd5a36d, radius: 0.17 },
+            sun: { name: 'Sun', color: 0xffc34d, radius: 0.27 }
+        };
+
+        let currentType = 'stellar';
+        let objects = [];
+        let holeGroup = new THREE.Group();
+        scene.add(holeGroup);
+
+        // A static star field gives the scene depth without external image assets.
+        const starPositions = new Float32Array(1800 * 3);
+        for (let i = 0; i < starPositions.length; i += 3) {
+            starPositions[i] = (Math.random() - 0.5) * 100;
+            starPositions[i + 1] = (Math.random() - 0.5) * 70;
+            starPositions[i + 2] = (Math.random() - 0.5) * 100;
+        }
+        const starGeometry = new THREE.BufferGeometry();
+        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+        const starField = new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0xb9d7ff, size: 0.075, sizeAttenuation: true }));
+        scene.add(starField);
+
+        function makeAccretionDisk(radius) {
+            const group = new THREE.Group();
+            const layers = [
+                { inner: radius * 1.18, outer: radius * 1.52, color: 0xffdf9a, opacity: 0.92 },
+                { inner: radius * 1.5, outer: radius * 1.95, color: 0xff7b32, opacity: 0.56 },
+                { inner: radius * 1.92, outer: radius * 2.4, color: 0x8d68ff, opacity: 0.25 }
+            ];
+            for (const layer of layers) {
+                const geometry = new THREE.RingGeometry(layer.inner, layer.outer, 160, 1);
+                const material = new THREE.MeshBasicMaterial({ color: layer.color, side: THREE.DoubleSide, transparent: true, opacity: layer.opacity, blending: THREE.AdditiveBlending, depthWrite: false });
+                const ring = new THREE.Mesh(geometry, material);
+                ring.rotation.x = -Math.PI / 2.35;
+                group.add(ring);
+            }
+            // Thin bright inner rim helps distinguish the glowing gas from the dark horizon.
+            const rim = new THREE.Mesh(
+                new THREE.TorusGeometry(radius * 1.13, Math.max(radius * 0.035, 0.018), 10, 160),
+                new THREE.MeshBasicMaterial({ color: 0xffe6bd, transparent: true, opacity: 0.9 })
+            );
+            rim.rotation.x = -Math.PI / 2.35;
+            group.add(rim);
+            return group;
+        }
+
+        function buildHole() {
+            holeGroup.clear();
+            const model = models[currentType];
+            const horizon = new THREE.Mesh(
+                new THREE.SphereGeometry(model.radius, 64, 48),
+                new THREE.MeshBasicMaterial({ color: 0x010207, side: THREE.FrontSide })
+            );
+            holeGroup.add(horizon);
+
+            const glow = new THREE.Mesh(
+                new THREE.SphereGeometry(model.radius * 1.035, 64, 48),
+                new THREE.MeshBasicMaterial({ color: 0x4b6b9b, side: THREE.BackSide, transparent: true, opacity: 0.22 })
+            );
+            holeGroup.add(glow);
+            holeGroup.add(makeAccretionDisk(model.radius));
+
+            // A small polar glow suggests energetic material near the poles; it is illustrative.
+            for (const direction of [-1, 1]) {
+                const jet = new THREE.Mesh(
+                    new THREE.ConeGeometry(model.radius * 0.16, model.radius * 1.5, 24, 1, true),
+                    new THREE.MeshBasicMaterial({ color: 0x74bfff, transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false })
+                );
+                jet.position.y = direction * model.radius * 1.1;
+                jet.rotation.x = direction < 0 ? Math.PI : 0;
+                holeGroup.add(jet);
+            }
+            updateStats();
+        }
+
+        function placeObjects() {
+            objects.forEach((object, index) => {
+                const angle = index * 2.399;
+                const distance = models[currentType].radius * 2.8 + 0.65 + Math.floor(index / 8) * 0.45;
+                object.position.set(Math.cos(angle) * distance, Math.sin(index * 1.7) * 0.16, Math.sin(angle) * distance);
+            });
+        }
+
+        function updateStats() {
+            const model = models[currentType];
+            stats.innerHTML = `<strong>${model.name}</strong><br>Estimated mass: ${model.mass}<br>Approx. Schwarzschild radius: ${model.schwarzschild}<br>Comparison objects: ${objects.length}<br><br><strong>Scale note:</strong> Rendered sizes and spacing are compressed for visibility, not to scale. TON 618 mass and size are approximate and published estimates vary. This is an educational illustration, not a physical simulation.`;
+        }
+
+        function addPlanet(key) {
+            const data = comparison[key];
+            const material = new THREE.MeshStandardMaterial({ color: data.color, roughness: 0.78, metalness: 0.02, emissive: data.color, emissiveIntensity: 0.08 });
+            const sphere = new THREE.Mesh(new THREE.SphereGeometry(data.radius, 40, 32), material);
+            sphere.userData.name = data.name;
+            scene.add(sphere);
+            objects.push(sphere);
+            placeObjects();
+            updateStats();
+        }
+
+        select.addEventListener('change', () => {
+            currentType = select.value;
+            buildHole();
+            placeObjects();
+        });
+        document.querySelectorAll('[data-planet]').forEach(button => button.addEventListener('click', () => addPlanet(button.dataset.planet)));
+        document.getElementById('clearPlanets').addEventListener('click', () => {
+            for (const object of objects) {
+                scene.remove(object);
+                object.geometry.dispose();
+                object.material.dispose();
+            }
+            objects = [];
+            updateStats();
+        });
+        document.getElementById('resetView').addEventListener('click', () => {
+            camera.position.set(0, 3.2, 8.5);
+            orbit.target.set(0, 0, 0);
+            orbit.update();
+        });
+
+        function onResize() {
+            camera.aspect = innerWidth / innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(innerWidth, innerHeight);
+            renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        }
+        window.addEventListener('resize', onResize);
+
+        buildHole();
+        function animate() {
+            requestAnimationFrame(animate);
+            holeGroup.rotation.y += 0.0015;
+            orbit.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>
