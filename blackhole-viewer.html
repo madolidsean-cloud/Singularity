@@ -81,6 +81,52 @@
         renderer.toneMappingExposure = 1.25;
         mount.appendChild(renderer.domElement);
 
+        // A lightweight screen-space lensing pass bends the rendered background around the hole.
+        // It is a visual approximation of gravitational deflection, not a general-relativity solver.
+        const lensTarget = new THREE.WebGLRenderTarget(innerWidth, innerHeight, {
+            minFilter: THREE.LinearFilter,
+            magFilter: THREE.LinearFilter,
+            format: THREE.RGBAFormat,
+            depthBuffer: true
+        });
+        const lensScene = new THREE.Scene();
+        const lensCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        const lensMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                tScene: { value: lensTarget.texture },
+                lensCenter: { value: new THREE.Vector2(0.5, 0.5) },
+                lensRadius: { value: 0.06 },
+                aspect: { value: innerWidth / innerHeight }
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform sampler2D tScene;
+                uniform vec2 lensCenter;
+                uniform float lensRadius;
+                uniform float aspect;
+                varying vec2 vUv;
+                void main() {
+                    vec2 p = (vUv - lensCenter) * vec2(aspect, 1.0);
+                    float r = length(p);
+                    float einsteinRadius = lensRadius * 2.15;
+                    float fade = 1.0 - smoothstep(einsteinRadius, einsteinRadius * 4.5, r);
+                    float safeRadius2 = max(dot(p, p), lensRadius * lensRadius * 0.8);
+                    float bend = min((einsteinRadius * einsteinRadius) / safeRadius2, 0.62) * fade;
+                    vec2 source = vUv - (p / vec2(aspect, 1.0)) * bend;
+                    source = clamp(source, vec2(0.001), vec2(0.999));
+                    gl_FragColor = texture2D(tScene, source);
+                }
+            `
+        });
+        const lensQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), lensMaterial);
+        lensScene.add(lensQuad);
+
         const orbit = new OrbitControls(camera, renderer.domElement);
         orbit.enableDamping = true;
         orbit.dampingFactor = 0.055;
@@ -100,7 +146,8 @@
             stellar: { name: 'Stellar-mass', mass: 'about 10 solar masses', radius: 0.43, schwarzschild: 'about 30 km' },
             intermediate: { name: 'Intermediate-mass', mass: 'about 10,000 solar masses', radius: 0.58, schwarzschild: 'about 30,000 km' },
             supermassive: { name: 'Supermassive (Sagittarius A* scale)', mass: 'about 4 million solar masses', radius: 0.76, schwarzschild: 'about 12 million km' },
-            ton618: { name: 'TON 618', mass: 'roughly 66 billion solar masses', radius: 1.02, schwarzschild: 'roughly 1,300 AU (about 194 billion km)' }
+            // Deliberately enlarged in the compressed display scale so TON 618 reads as the largest model.
+            ton618: { name: 'TON 618', mass: 'roughly 66 billion solar masses', radius: 1.75, schwarzschild: 'roughly 1,300 AU (about 194 billion km)' }
         };
         const comparison = {
             earth: { name: 'Earth', color: 0x438eff, radius: 0.09 },
@@ -110,7 +157,7 @@
 
         let currentType = 'stellar';
         let objects = [];
-        let holeGroup = new THREE.Group();
+        const holeGroup = new THREE.Group();
         scene.add(holeGroup);
 
         // A static star field gives the scene depth without external image assets.
@@ -139,13 +186,19 @@
                 ring.rotation.x = -Math.PI / 2.35;
                 group.add(ring);
             }
-            // Thin bright inner rim helps distinguish the glowing gas from the dark horizon.
+            // Bright inner rim and a second faint ring suggest the lensed photon ring.
             const rim = new THREE.Mesh(
                 new THREE.TorusGeometry(radius * 1.13, Math.max(radius * 0.035, 0.018), 10, 160),
                 new THREE.MeshBasicMaterial({ color: 0xffe6bd, transparent: true, opacity: 0.9 })
             );
             rim.rotation.x = -Math.PI / 2.35;
             group.add(rim);
+            const photonRing = new THREE.Mesh(
+                new THREE.TorusGeometry(radius * 1.075, Math.max(radius * 0.012, 0.008), 8, 160),
+                new THREE.MeshBasicMaterial({ color: 0xb9dfff, transparent: true, opacity: 0.58, blending: THREE.AdditiveBlending })
+            );
+            photonRing.rotation.x = -Math.PI / 2.35;
+            group.add(photonRing);
             return group;
         }
 
@@ -188,7 +241,7 @@
 
         function updateStats() {
             const model = models[currentType];
-            stats.innerHTML = `<strong>${model.name}</strong><br>Estimated mass: ${model.mass}<br>Approx. Schwarzschild radius: ${model.schwarzschild}<br>Comparison objects: ${objects.length}<br><br><strong>Scale note:</strong> Rendered sizes and spacing are compressed for visibility, not to scale. TON 618 mass and size are approximate and published estimates vary. This is an educational illustration, not a physical simulation.`;
+            stats.innerHTML = `<strong>${model.name}</strong><br>Estimated mass: ${model.mass}<br>Approx. Schwarzschild radius: ${model.schwarzschild}<br>Comparison objects: ${objects.length}<br><br><strong>Scale note:</strong> Rendered sizes and spacing are compressed for visibility, not to scale. The lensing pass is an illustrative screen-space approximation, not a physical simulation. TON 618 mass and size are approximate and published estimates vary.`;
         }
 
         function addPlanet(key) {
@@ -200,6 +253,19 @@
             objects.push(sphere);
             placeObjects();
             updateStats();
+        }
+
+        function updateLensCenter() {
+            const model = models[currentType];
+            const centerWorld = holeGroup.position.clone();
+            const up = camera.up.clone().normalize();
+            const edgeWorld = centerWorld.clone().addScaledVector(up, model.radius);
+            const centerNdc = centerWorld.project(camera);
+            const edgeNdc = edgeWorld.project(camera);
+            lensMaterial.uniforms.lensCenter.value.set(centerNdc.x * 0.5 + 0.5, centerNdc.y * 0.5 + 0.5);
+            // NDC-to-texture conversion is one half; a minimum keeps the lens visible at a distance.
+            lensMaterial.uniforms.lensRadius.value = Math.max(Math.abs(edgeNdc.y - centerNdc.y) * 0.5, 0.012);
+            lensMaterial.uniforms.aspect.value = camera.aspect;
         }
 
         select.addEventListener('change', () => {
@@ -228,6 +294,8 @@
             camera.updateProjectionMatrix();
             renderer.setSize(innerWidth, innerHeight);
             renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+            lensTarget.setSize(innerWidth * renderer.getPixelRatio(), innerHeight * renderer.getPixelRatio());
+            lensMaterial.uniforms.aspect.value = camera.aspect;
         }
         window.addEventListener('resize', onResize);
 
@@ -236,7 +304,11 @@
             requestAnimationFrame(animate);
             holeGroup.rotation.y += 0.0015;
             orbit.update();
+            updateLensCenter();
+            renderer.setRenderTarget(lensTarget);
             renderer.render(scene, camera);
+            renderer.setRenderTarget(null);
+            renderer.render(lensScene, lensCamera);
         }
         animate();
     </script>
