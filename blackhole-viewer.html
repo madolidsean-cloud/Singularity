@@ -160,17 +160,67 @@
         const holeGroup = new THREE.Group();
         scene.add(holeGroup);
 
-        // A static star field gives the scene depth without external image assets.
-        const starPositions = new Float32Array(1800 * 3);
+        // Layer a denser field of brighter, softly colored stars behind the black hole.
+        const starCount = 3200;
+        const starPositions = new Float32Array(starCount * 3);
+        const starColors = new Float32Array(starCount * 3);
+        const starPalette = [
+            new THREE.Color(0xdceaff),
+            new THREE.Color(0xffffff),
+            new THREE.Color(0x9fcaff),
+            new THREE.Color(0xffe3c2)
+        ];
         for (let i = 0; i < starPositions.length; i += 3) {
             starPositions[i] = (Math.random() - 0.5) * 100;
             starPositions[i + 1] = (Math.random() - 0.5) * 70;
             starPositions[i + 2] = (Math.random() - 0.5) * 100;
+            const color = starPalette[Math.floor(Math.random() * starPalette.length)];
+            const brightness = 0.72 + Math.random() * 0.58;
+            starColors[i] = color.r * brightness;
+            starColors[i + 1] = color.g * brightness;
+            starColors[i + 2] = color.b * brightness;
         }
         const starGeometry = new THREE.BufferGeometry();
         starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
-        const starField = new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0xb9d7ff, size: 0.075, sizeAttenuation: true }));
+        starGeometry.setAttribute('color', new THREE.Float32BufferAttribute(starColors, 3));
+        const starField = new THREE.Points(starGeometry, new THREE.PointsMaterial({
+            color: 0xffffff,
+            vertexColors: true,
+            size: 0.11,
+            sizeAttenuation: true,
+            transparent: true,
+            opacity: 0.96,
+            depthWrite: false
+        }));
         scene.add(starField);
+
+        // A smaller sprinkling of larger points makes the brightest stars stand out.
+        const brightStarCount = 240;
+        const brightStarPositions = new Float32Array(brightStarCount * 3);
+        const brightStarColors = new Float32Array(brightStarCount * 3);
+        const brightPalette = [0xffffff, 0xb9ddff, 0xffd9a8];
+        for (let i = 0; i < brightStarPositions.length; i += 3) {
+            brightStarPositions[i] = (Math.random() - 0.5) * 100;
+            brightStarPositions[i + 1] = (Math.random() - 0.5) * 70;
+            brightStarPositions[i + 2] = (Math.random() - 0.5) * 100;
+            const color = new THREE.Color(brightPalette[Math.floor(Math.random() * brightPalette.length)]);
+            brightStarColors[i] = color.r;
+            brightStarColors[i + 1] = color.g;
+            brightStarColors[i + 2] = color.b;
+        }
+        const brightStarGeometry = new THREE.BufferGeometry();
+        brightStarGeometry.setAttribute('position', new THREE.Float32BufferAttribute(brightStarPositions, 3));
+        brightStarGeometry.setAttribute('color', new THREE.Float32BufferAttribute(brightStarColors, 3));
+        const brightStarField = new THREE.Points(brightStarGeometry, new THREE.PointsMaterial({
+            color: 0xffffff,
+            vertexColors: true,
+            size: 0.2,
+            sizeAttenuation: true,
+            transparent: true,
+            opacity: 1,
+            depthWrite: false
+        }));
+        scene.add(brightStarField);
 
         function makeAccretionDisk(radius) {
             const group = new THREE.Group();
